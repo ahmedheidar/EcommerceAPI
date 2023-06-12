@@ -1,0 +1,60 @@
+.plans-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding-top: 1rem;
+  background-color: #ECF8F9;
+}
+
+
+.plans {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20rem;
+    height: 20rem;
+    margin: 3rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #5c6ac4;
+}
+
+.plans-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 2rem;
+  padding: 3rem;
+}
+
+.subscribe-button {
+  margin-top: 2rem;
+  width: 80%;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background-color: #068DA9;
+  cursor: pointer;
+
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 20rem;
+  height: 20rem;
+  margin: 3rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #E55807;
+}
