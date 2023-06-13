@@ -6,6 +6,7 @@ import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 // import CheckoutForm from '@payments/checkout';
 import "./page.styles.css";
+import { payment } from "../payments/checkout/page";
 
 const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
 
@@ -18,13 +19,13 @@ const PlansPage = () => {
           <h2>Premium</h2>
           <p>Access to all the features</p>
           <p>Price: $50.00</p>
-          <button className="subscribe-button">Subscribe</button>
+          <button className="subscribe-button" onClick={()=>{payment('price_1NIHkrHWWssUp0efxecdFddg')}}>Subscribe</button>
         </div>
         <div className="plan">
           <h2>Basic</h2>
           <p>Access to some of the features</p>
           <p>Price: $10.00</p>
-          <button className="subscribe-button">Subscribe</button>
+          <button className="subscribe-button" onClick={()=>{payment('price_1NIK4PHWWssUp0efsIL1UqXL')}}>Subscribe</button>
         </div>
       </div>
     </div>
