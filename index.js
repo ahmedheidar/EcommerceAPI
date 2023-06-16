@@ -43,3 +43,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+}
+);
