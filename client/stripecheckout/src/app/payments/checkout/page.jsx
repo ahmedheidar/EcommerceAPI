@@ -1,90 +1,92 @@
+"use client";
 import { loadStripe } from "@stripe/stripe-js";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const stripe = await loadStripe(
-  "pk_test_51NGnGsHWWssUp0efQhuaRItb7FlRhAQIUbLfKC8t9Jet4QpnfnLGSRKBEiOz3A0rBfclw5Q0AtAAXaUgfV8nyNIo00CCNSkGGn"
-);
-let clientSecret;
-const response = async (plan) => {
-  const res = await fetch(
-    "http://localhost:5000/connect/create-checkout-session",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ plan: plan }),
-    }
-  );
+// const response = async (plan) => {
+//   const res = await fetch(
+//     "http://localhost:5000/connect/create-checkout-session",
+//     {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ plan: plan }),
+//     }
+//   );
 
-  const session = await res.json();
-  return session;
-};
+//   const session = await res.json();
+//   return session;
+// };
 
- async function payment(plan) {
-  const session = await response(plan);
-  const { error } = await stripe.redirectToCheckout({
-    sessionId: session.id,
-  });
-  if (error) {
-    console.log(error);
+// async function payment(plan) {
+//   const session = await response(plan);
+//   const { error } = await stripe.redirectToCheckout({
+//     sessionId: session.id,
+//   });
+//   if (error) {
+//     console.log(error);
+//   }
+// }
+
+export default function CheckOutPage() {
+  const [Loading, setLoading] = useState(true);
+  const [StripeHandler, setStripeHandler] = useState(null);
+  const [cardElementHandler, setCardelementHandler] = useState(null);
+
+  async function AddStripeComp() {
+    const stripe = await loadStripe(
+      "pk_test_51NGnGsHWWssUp0efQhuaRItb7FlRhAQIUbLfKC8t9Jet4QpnfnLGSRKBEiOz3A0rBfclw5Q0AtAAXaUgfV8nyNIo00CCNSkGGn"
+    );
+    setStripeHandler(stripe);
+    const elements = stripe.elements();
+    const cardElement = elements.create("card");
+    setCardelementHandler(cardElement);
+    cardElement.mount("#card-element");
   }
-}
-
-async function payment2(amount) {
-  const res = await fetch(
-    "http://localhost:5000/payments/create-payment-intent",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount: amount }),
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch payment intent");
-  }
-
-  const paymentIntent = await res.json();
-  return paymentIntent; // Return the paymentIntent object
-}
-
-const CheckOutPage = () => {
-  const elements = stripe.elements();
-  const cardElement = elements.create("card");
-  cardElement.mount("#card-element");
-  const [clientSecret, setClientSecret] = useState(null);
 
   useEffect(() => {
-    // Call payment2 function to get the clientSecret
-    const fetchClientSecret = async () => {
-      try {
-        const result = await payment2(15000);
-        setClientSecret(result.clientSecret);
-      } catch (error) {
-        // Handle error here
-      }
-    };
+    setLoading(true);
+    AddStripeComp();
+    setLoading(false);
+  }, []);
 
-    fetchClientSecret();
-  }, [amount]);
+  async function CreatePaymentIntent(amount) {
+    const res = await fetch(
+      "http://localhost:5000/payments/create-payment-intent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount: amount }),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch payment intent");
+    }
+
+    const paymentIntent = await res.json();
+    return paymentIntent; // Return the paymentIntent object
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
+    const { error, paymentMethod } = await StripeHandler.createPaymentMethod({
       type: "card",
-      card: cardElement,
+      card: cardElementHandler,
     });
     if (!error) {
       const { id } = paymentMethod;
       try {
-        const { error } = await stripe.confirmCardPayment(clientSecret, {
-          payment_method: id,
-        });
+        const result = await CreatePaymentIntent(15000);
+        const { error } = await StripeHandler.confirmCardPayment(
+          result.clientSecret,
+          {
+            payment_method: id,
+          }
+        );
         if (error) {
           throw new Error(error.message);
         }
@@ -94,18 +96,22 @@ const CheckOutPage = () => {
     }
   };
 
+  if (Loading)
+    return (
+      <div className=" loadingText">
+        <p>Loading...</p>
+      </div>
+    );
+
   return (
     // call payment2
-    <div>
+    <div className="paymentCont">
       <form id="payment-form">
         <div id="card-element"></div>
-
         <button id="submit-payment" onClick={handleSubmit}>
           Pay Now
         </button>
       </form>
     </div>
   );
-};
-
-export default CheckOutPage;
+}
