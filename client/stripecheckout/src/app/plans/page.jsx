@@ -28,13 +28,13 @@ const PlansPage = () => {
           <p>Price: $10.00</p>
           <button className="subscribe-button" onClick={()=>{payment('price_1NIK4PHWWssUp0efsIL1UqXL')}}>Subscribe</button>
         </div> */}
-        <div className="plan">
-          {/* <h2>Early Subscription</h2>
+        {/* <div className="plan">
+          <h2>Early Subscription</h2>
           <p>Get a special offer for subscribing now!</p>
           <p>Price: $150.00</p>
-          <button className="subscribe-button" onClick={()=>{CheckOutPage(15000)}}>Subscribe</button> */}
+          <button className="subscribe-button" onClick={()=>{CheckOutPage(15000)}}>Subscribe</button>
+        </div> */}
           <CheckOutPage/>
-        </div>
       </div>
     </div>
   );

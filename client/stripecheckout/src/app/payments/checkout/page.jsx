@@ -81,14 +81,32 @@ export default function CheckOutPage() {
       const { id } = paymentMethod;
       try {
         const result = await CreatePaymentIntent(15000);
+        console.log(result);
         const { error } = await StripeHandler.confirmCardPayment(
-          result.clientSecret,
+          result.client_secret,
           {
             payment_method: id,
           }
         );
         if (error) {
+          alert('Payment Unsuccessful')
           throw new Error(error.message);
+        }else{
+          alert('Payment Successful')
+          try{
+            const res = await fetch('http://localhost:5000/payments/saveEarlySubscription',{
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({customerId: result.customer, paymentIntentId: result.id})
+            })
+            if(!res.ok){
+              throw new Error('Failed to save subscription')
+            }
+          }catch(error){
+            console.log(error)
+          }
         }
       } catch (error) {
         console.log(error);
