@@ -2,31 +2,6 @@
 import { loadStripe } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
 
-// const response = async (plan) => {
-//   const res = await fetch(
-//     "http://localhost:5000/connect/create-checkout-session",
-//     {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ plan: plan }),
-//     }
-//   );
-
-//   const session = await res.json();
-//   return session;
-// };
-
-// async function payment(plan) {
-//   const session = await response(plan);
-//   const { error } = await stripe.redirectToCheckout({
-//     sessionId: session.id,
-//   });
-//   if (error) {
-//     console.log(error);
-//   }
-// }
 
 export default function CheckOutPage() {
   const [Loading, setLoading] = useState(true);

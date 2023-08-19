@@ -6,35 +6,65 @@ import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 // import CheckoutForm from '@payments/checkout';
 import "./page.styles.css";
-import { payment, payment2 } from "../payments/checkout/page";
 import CheckOutPage from "../payments/checkout/page";
 
-const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
+
+const payment = async () => {
+  const stripePromise = loadStripe('pk_test_51NGnGsHWWssUp0efQhuaRItb7FlRhAQIUbLfKC8t9Jet4QpnfnLGSRKBEiOz3A0rBfclw5Q0AtAAXaUgfV8nyNIo00CCNSkGGn');
+  const priceId = "price_1Nan2XHWWssUp0ef5IXneAXw";
+  const stripe = await stripePromise;
+  const email = "ahmedtest@gmail.com";
+  const customer = await fetch("http://localhost:5000/payments/create-customer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ 
+      email: email
+      }),
+  }).then((response) => response.json());
+
+  console.log(customer);
+
+  const response = await fetch("http://localhost:5000/payments/create-checkout-session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ 
+      priceId: priceId,
+      customer: customer.id,
+     }),
+  });
+  const session = await response.json();
+  // When the customer clicks on the button, redirect them to Checkout.
+  const result = await stripe.redirectToCheckout({
+    sessionId: session.id,
+  });
+  console.log(result);
+  if (result.error) {
+    alert(result.error.message);
+  }
+}
 
 const PlansPage = () => {
   return (
     <div className="plans-page">
       <h1 style={{ color: "black" }}>Plans</h1>
       <div className="plans-container">
-        {/* <div className="plan">
+        <div className="plan">
           <h2>Premium</h2>
           <p>Access to all the features</p>
           <p>Price: $50.00</p>
-          <button className="subscribe-button" onClick={()=>{payment('price_1NIHkrHWWssUp0efxecdFddg')}}>Subscribe</button>
+          <button className="subscribe-button" onClick={()=>{payment()}}>Subscribe</button>
         </div>
         <div className="plan">
           <h2>Basic</h2>
           <p>Access to some of the features</p>
           <p>Price: $10.00</p>
-          <button className="subscribe-button" onClick={()=>{payment('price_1NIK4PHWWssUp0efsIL1UqXL')}}>Subscribe</button>
-        </div> */}
-        {/* <div className="plan">
-          <h2>Early Subscription</h2>
-          <p>Get a special offer for subscribing now!</p>
-          <p>Price: $150.00</p>
-          <button className="subscribe-button" onClick={()=>{CheckOutPage(15000)}}>Subscribe</button>
-        </div> */}
-          <CheckOutPage/>
+          <button className="subscribe-button" onClick={()=>{payment()}}>Subscribe</button>
+        </div>
+          {/* <CheckOutPage/> */}
       </div>
     </div>
   );
