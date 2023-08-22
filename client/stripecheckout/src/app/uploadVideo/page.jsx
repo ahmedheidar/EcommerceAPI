@@ -15,7 +15,7 @@ const SingleVideoUpload = () => {
     console.log('formData:', formData);
 
     try {
-      const response = await fetch('http://localhost:5000/coach/upload', {
+      const response = await fetch('http://localhost:5000/coach/uploadVideo', {
         method: 'POST',
         body: formData,
       });
